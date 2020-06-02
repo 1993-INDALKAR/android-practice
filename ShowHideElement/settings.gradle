@@ -1,0 +1,2 @@
+rootProject.name='ShowHideElement'
+include ':app'
