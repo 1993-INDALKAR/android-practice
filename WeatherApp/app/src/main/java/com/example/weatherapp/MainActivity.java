@@ -1,10 +1,12 @@
-package com.example.jsondemo;
+package com.example.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +20,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+
+    DownloadTask task;
+    TextView weather;
+    TextView temp;
+    TextView desc;
 
     public class DownloadTask extends AsyncTask<String,Void,String> {
 
@@ -64,9 +71,21 @@ public class MainActivity extends AppCompatActivity {
 
                 for(int i =0;i<arr.length();i++){
                     JSONObject jsonPart = arr.getJSONObject(i);
+                    weather.setText(jsonPart.getString("main"));
+                    desc.setText(jsonPart.getString("description"));
                     Log.i("Main",jsonPart.getString("main"));
                     Log.i("Description",jsonPart.getString("description"));
                 }
+
+                String main = jsonObject.getString("main");
+                 arr = new JSONArray(main);
+
+                for(int i =0;i<arr.length();i++){
+                    JSONObject jsonPart = arr.getJSONObject(i);
+                    temp.setText(jsonPart.getString("temp"));
+                    Log.i("Temp",jsonPart.getString("temp"));
+                }
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -76,13 +95,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DownloadTask task = new DownloadTask();
+        task = new DownloadTask();
+        weather = findViewById(R.id.weather);
+        temp = findViewById(R.id.temp);
+        desc = findViewById(R.id.desc);
 
-        task.execute("https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02");
+    }
+
+    public void getWeather(View view){
+        TextView city = findViewById(R.id.editText);
+//        task.execute("https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02");
+        String url = "api.openweathermap.org/data/2.5/weather?q=" + city +"&appid=439d4b804bc8187953eb36d2a8c26a02";
+        task.execute(url);
+
+
     }
 }
